@@ -1,0 +1,21 @@
+{
+  "contratos_descargados": 1717440,
+  "contratos_finales": 1697301,
+  "tasa_prorroga": 0.1221,
+  "cruce_procesos": 0.9961,
+  "cruce_proveedores": 0.9807,
+  "columnas_fuga": [
+    "valor_facturado",
+    "valor_pagado",
+    "valor_pendiente_de_ejecucion",
+    "estado_contrato",
+    "liquidaci_n",
+    "ultima_actualizacion",
+    "dias_adicionados",
+    "fecha_de_fin_del_contrato",
+    "duracion_real_dias",
+    "valor_del_contrato",
+    "log_valor",
+    "ratio_valor_precio_base"
+  ]
+}

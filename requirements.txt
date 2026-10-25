@@ -1,0 +1,10 @@
+pandas
+pyarrow
+requests
+pyyaml
+matplotlib
+seaborn
+jupyter
+nbconvert
+ipykernel
+dvc

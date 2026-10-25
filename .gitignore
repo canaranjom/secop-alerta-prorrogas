@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+# Los archivos de datos los ignora DVC automáticamente (data/*/.gitignore) y quedan versionados en dvc.lock
+download.log

@@ -1,0 +1,26 @@
+stages:
+  download:
+    cmd: python src/download_secop.py
+    deps:
+      - src/download_secop.py
+    params:
+      - download
+    outs:
+      - data/raw/contratos.parquet
+      - data/raw/procesos.parquet
+      - data/raw/proveedores.parquet
+
+  build:
+    cmd: python src/build_dataset.py
+    deps:
+      - src/build_dataset.py
+      - data/raw/contratos.parquet
+      - data/raw/procesos.parquet
+      - data/raw/proveedores.parquet
+    params:
+      - build
+    outs:
+      - data/processed/contratos_modelo.parquet
+    metrics:
+      - data/processed/resumen.json:
+          cache: false

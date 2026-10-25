@@ -1,0 +1,61 @@
+schema: '2.0'
+stages:
+  download:
+    cmd: python src/download_secop.py
+    deps:
+    - path: src/download_secop.py
+      hash: md5
+      md5: 6d21404ad931f63492d2a902945ce47e
+      size: 5528
+    params:
+      params.yaml:
+        download:
+          fecha_firma_desde: '2023-01-01'
+          fecha_firma_hasta: '2024-12-31'
+          fecha_publicacion_proceso_desde: '2022-07-01'
+          page_size: 200000
+    outs:
+    - path: data/raw/contratos.parquet
+      hash: md5
+      md5: 7f604eebd211603f8bed55e4a581b0ce
+      size: 284457458
+    - path: data/raw/procesos.parquet
+      hash: md5
+      md5: fd105509b614136c4276f5927b5976d7
+      size: 38019832
+    - path: data/raw/proveedores.parquet
+      hash: md5
+      md5: 13209922d2dbe2517203aad27f918db6
+      size: 10414481
+  build:
+    cmd: python src/build_dataset.py
+    deps:
+    - path: data/raw/contratos.parquet
+      hash: md5
+      md5: 7f604eebd211603f8bed55e4a581b0ce
+      size: 284457458
+    - path: data/raw/procesos.parquet
+      hash: md5
+      md5: fd105509b614136c4276f5927b5976d7
+      size: 38019832
+    - path: data/raw/proveedores.parquet
+      hash: md5
+      md5: 13209922d2dbe2517203aad27f918db6
+      size: 10414481
+    - path: src/build_dataset.py
+      hash: md5
+      md5: 9f5304ad6750d6ff07a30963004a7370
+      size: 5475
+    params:
+      params.yaml:
+        build:
+          fecha_corte: '2026-10-01'
+    outs:
+    - path: data/processed/contratos_modelo.parquet
+      hash: md5
+      md5: 5845602e9664d8e14de727e5dbdcdf98
+      size: 368352526
+    - path: data/processed/resumen.json
+      hash: md5
+      md5: a4be29d322c54dc4d40f5a367537c21e
+      size: 507

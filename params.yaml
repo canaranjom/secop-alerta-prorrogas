@@ -1,0 +1,13 @@
+# Parámetros del pipeline de datos (DVC los rastrea: si cambian, la etapa se vuelve a ejecutar)
+download:
+  # Ventana de firma de contratos. v1 = 2023-2024 (contratos que en su mayoría ya terminaron,
+  # de modo que el resultado "fue prorrogado / no fue prorrogado" ya es observable).
+  fecha_firma_desde: "2023-01-01"
+  fecha_firma_hasta: "2024-12-31"
+  # Los procesos se publican antes de la firma: se descargan con 6 meses de margen.
+  fecha_publicacion_proceso_desde: "2022-07-01"
+  page_size: 200000
+
+build:
+  # Contratos sin fecha de fin o con fin posterior a esta fecha se excluyen (resultado aún abierto).
+  fecha_corte: "2026-10-01"
