@@ -1,0 +1,16 @@
+name: secop
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pandas
+  - pyarrow
+  - numpy
+  - requests
+  - pyyaml
+  - matplotlib
+  - seaborn
+  - jupyter
+  - nbconvert
+  - ipykernel
+  - dvc
