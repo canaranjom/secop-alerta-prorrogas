@@ -32,7 +32,7 @@ La pregunta de negocio es pertinente, está alineada con el producto y es cohere
 
 ## Referencias
 
-- Chapman, P., Clinton, J., Kerber, R., Khabaza, T., Reinartz, T., Shearer, C. y Wirth, R. (2000). *CRISP-DM 1.0: Step-by-step data mining guide*. SPSS.
+- Chapman, P., Clinton, J., Kerber, R., Khabaza, T., Reinartz, T., Shearer, C. y Wirth, R. (2000). *CRISP-DM 1.0: Step-by-step data mining guide*. CRISP-DM Consortium.
 - Klein, J. P. y Moeschberger, M. L. (2003). *Survival analysis: Techniques for censored and truncated data* (2.ª ed.). Springer.
 - Niculescu-Mizil, A. y Caruana, R. (2005). Predicting good probabilities with supervised learning. En *Proceedings of the 22nd International Conference on Machine Learning (ICML)* (pp. 625–632).
 - Provost, F. y Fawcett, T. (2013). *Data science for business: What you need to know about data mining and data-analytic thinking*. O'Reilly Media.
