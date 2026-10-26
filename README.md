@@ -43,6 +43,11 @@ jupyter notebook notebooks/01_exploracion_secop.ipynb
 ```
 Opcional: `SOCRATA_APP_TOKEN` (token gratuito de datos.gov.co) para evitar límites de la API.
 
+Con conda: `conda env create -f environment.yml && conda activate secop`.
+
+**Datos ya generados** (misma versión de `dvc.lock`, ~670 MB): [Google Drive – secop-alerta-prorrogas-datos](https://drive.google.com/drive/folders/1gstAO5z1DnsefY5eUyVOuUw8qOFhdwH5?usp=sharing).
+Copiar `raw/` y `processed/` dentro de `data/` para correr el notebook sin descargar desde la API.
+
 ## Estructura
 ```
 params.yaml            parámetros (ventana de fechas, fecha de corte)
@@ -52,7 +57,7 @@ src/build_dataset.py   cruce de tablas + variable objetivo
 notebooks/             exploración de datos
 reports/figures/       gráficas de la exploración
 docs/                  maqueta del prototipo (GitHub Pages)
-entrega/               reporte de la Entrega 1
+entrega/               reporte de la Entrega 1 y reporte de trabajo en equipo
 ```
 
 **Maqueta:** https://canaranjom.github.io/secop-alerta-prorrogas/
