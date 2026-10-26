@@ -17,17 +17,21 @@
 
 La coordinación se realiza mediante el grupo de WhatsApp del equipo y el repositorio compartido en GitHub. Las reuniones y fechas de revisión interna están pendientes de confirmar.
 
+
 ## 3. Plan de trabajo para la Entrega 2
 
 **Fecha límite:** 8 de noviembre de 2026.
 
-| Actividad | Responsable | Fecha interna |
-|---|---|---|
-| Preparación de datos e ingeniería de variables | Por acordar | Por acordar |
-| Entrenamiento, evaluación y registro de experimentos en MLflow | Por acordar | Por acordar |
-| Desarrollo e integración de la API de inferencia | Por acordar | Por acordar |
-| Implementación del tablero | Por acordar | Por acordar |
-| Contenedores Docker y pruebas del despliegue | Por acordar | Por acordar |
-| Documentación y revisión final | Por acordar | Por acordar |
+Se propone la siguiente distribución preliminar de actividades, considerando los avances de la primera entrega. Los responsables y las fechas internas están sujetos a cambios según la disponibilidad del equipo y los ajustes técnicos que se requieran.
 
-**Nota:** Las responsabilidades, evidencias y fechas pendientes deben validarse con los integrantes antes de la entrega.
+| Actividad | Responsable propuesto | Fecha interna propuesta |
+|---|---|---|
+| Preparación de datos e ingeniería de variables | Camilo | 29 de octubre |
+| Entrenamiento y evaluación de modelos con MLflow | Camilo y Julián | 2 de noviembre |
+| Desarrollo e integración de la API de inferencia | Julián | 4 de noviembre |
+| Implementación del tablero y visualizaciones | Leydi | 5 de noviembre |
+| Contenedores Docker y pruebas de integración | Julián y Camilo | 6 de noviembre |
+| Documentación, revisión de evidencias y entrega final | Leydi, con revisión de todo el equipo | 7 de noviembre |
+
+**Nota:** Esta distribución constituye una propuesta inicial de organización del trabajo, sujeta a cambios y validación por parte de los tres integrantes. Las actividades serán desarrolladas de manera colaborativa y los avances se documentarán mediante commits en GitHub.
+  
