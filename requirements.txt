@@ -8,3 +8,10 @@ jupyter
 nbconvert
 ipykernel
 dvc
+dvc-s3
+mlflow
+scikit-learn
+lightgbm
+shap
+dash
+plotly
