@@ -1,4 +1,8 @@
 [core]
-    remote = local_storage
+    remote = s3remote
 ['remote "local_storage"']
     url = ../../dvc_storage_secop
+['remote "s3remote"']
+    url = s3://secop-alerta-prorrogas-dvc-cn/dvc
+    region = us-east-1
+    allow_anonymous_login = true
