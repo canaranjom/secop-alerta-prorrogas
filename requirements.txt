@@ -9,7 +9,7 @@ nbconvert
 ipykernel
 dvc
 dvc-s3
-mlflow
+mlflow==3.17.1
 scikit-learn
 lightgbm
 shap
