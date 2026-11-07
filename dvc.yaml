@@ -24,3 +24,16 @@ stages:
     metrics:
       - data/processed/resumen.json:
           cache: false
+
+  features:
+    cmd: python src/features.py
+    deps:
+      - src/features.py
+      - data/processed/contratos_modelo.parquet
+    params:
+      - features
+    outs:
+      - data/processed/features.parquet
+    metrics:
+      - data/processed/features_resumen.json:
+          cache: false

@@ -11,3 +11,11 @@ download:
 build:
   # Contratos sin fecha de fin o con fin posterior a esta fecha se excluyen (resultado aún abierto).
   fecha_corte: "2026-10-01"
+
+features:
+  # Partición temporal por fecha de firma: entrenar con el pasado, evaluar con el futuro.
+  # train: 2023-01 a 2024-03 · valid: 2024-04 a 2024-06 · test: 2024-07 a 2024-12
+  inicio_validacion: "2024-04-01"
+  inicio_prueba: "2024-07-01"
+  duracion_max_dias: 390   # percentil 99 de la duración pactada
+  suavizado_m: 20          # contratos "virtuales" con la tasa global en la tasa histórica
