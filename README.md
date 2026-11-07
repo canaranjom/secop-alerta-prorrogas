@@ -35,6 +35,9 @@ Todas las llaves se verificaron cruzando contratos reales de 2024 contra cada ta
 
 ## Reproducir
 
+Requiere **Python 3.12** (probado con 3.12.10; ver `.python-version`). Para revisar la versión: `python --version`.
+Con otras versiones pueden fallar la instalación de `requirements.txt` o la carga del modelo exportado en `models/`.
+
 ```bash
 python -m venv .venv && .venv/Scripts/activate      # Windows
 pip install -r requirements.txt
