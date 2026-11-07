@@ -1,0 +1,21 @@
+{
+  "filas": 1697301,
+  "prior_tasa_train": 0.1281,
+  "split": {
+    "train": {
+      "filas": 1117593,
+      "tasa_prorroga": 0.1281
+    },
+    "valid": {
+      "filas": 183052,
+      "tasa_prorroga": 0.1296
+    },
+    "test": {
+      "filas": 396656,
+      "tasa_prorroga": 0.1019
+    }
+  },
+  "n_categoricas": 21,
+  "n_numericas": 19,
+  "contratos_con_historia_entidad": 0.8628
+}

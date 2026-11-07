@@ -59,3 +59,30 @@ stages:
       hash: md5
       md5: a4be29d322c54dc4d40f5a367537c21e
       size: 507
+  features:
+    cmd: python src/features.py
+    deps:
+    - path: data/processed/contratos_modelo.parquet
+      hash: md5
+      md5: 5845602e9664d8e14de727e5dbdcdf98
+      size: 368352526
+    - path: src/features.py
+      hash: md5
+      md5: 92b9b51fa2230f3077a41b90f2e33689
+      size: 7295
+    params:
+      params.yaml:
+        features:
+          inicio_validacion: '2024-04-01'
+          inicio_prueba: '2024-07-01'
+          duracion_max_dias: 390
+          suavizado_m: 20
+    outs:
+    - path: data/processed/features.parquet
+      hash: md5
+      md5: 7b5872c519e90caf25e6dfccddc6956e
+      size: 47256801
+    - path: data/processed/features_resumen.json
+      hash: md5
+      md5: 6caf93af951e3c253e974c6968df573a
+      size: 402
