@@ -158,8 +158,6 @@ Runs ejecutados en el servidor MLflow de la EC2 del equipo, en el experimento `s
 
 Soportes: pantallazos de las comparaciones en MLflow (IP del servidor visible) para cada experimento.
 
-- **Experimento 2 (balanceo):**
-
 ## 6. Conclusiones
 
 - **Experimento 1. Suavizado m de la tasa histórica de la entidad:** se esperaba un equilibrio entre ruido (m pequeño) y pérdida de la señal propia de cada entidad (m grande), según el *m-estimate* (Cestnik, 1990; Micci-Barreca, 2001). El máximo se obtuvo en m = 20, pero toda la variación entre m = 5 y m = 100 fue de 0,0012 en AUC y 0,003 en precisión del 10 % en alerta; la variable es robusta al suavizado porque el 86,3 % de los contratos pertenece a entidades con historia previa. **Decisión: mantener m = 20.**
