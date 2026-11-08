@@ -1,0 +1,142 @@
+variable,categoria,contratos,shap_medio
+departamento,Putumayo,249,0.5240800863341686
+departamento,Amazonas,125,0.5003471330934177
+departamento,La Guajira,273,0.4604950021066755
+departamento,Distrito Capital de Bogotá,8594,0.42601265600079025
+departamento,Cundinamarca,1461,0.2585670501201412
+departamento,Cauca,488,0.22731851269341097
+departamento,Bolívar,1019,0.07411436758942964
+departamento,Quindío,451,0.03558425391741906
+departamento,Atlántico,899,0.024823692654917105
+departamento,Santander,1273,0.022712962544489103
+departamento,Nariño,460,-0.05689087520548952
+departamento,Antioquia,3128,-0.12643020414852943
+departamento,Sucre,208,-0.15460165896618402
+departamento,Meta,698,-0.23726385113841014
+departamento,Córdoba,209,-0.23768695577532484
+departamento,No Definido,590,-0.26384802266895374
+departamento,Valle del Cauca,3691,-0.32688253468195355
+departamento,Norte de Santander,866,-0.390721696114743
+departamento,Cesar,300,-0.3981984500297147
+departamento,Caldas,569,-0.4043962258626626
+departamento,Tolima,811,-0.45266925194469115
+departamento,Risaralda,631,-0.5218950094490502
+departamento,Caquetá,191,-0.538368357950634
+departamento,Magdalena,537,-0.5488791488979466
+departamento,Boyacá,938,-0.6581889402766754
+departamento,Huila,508,-0.6876749324896505
+departamento,"San Andrés, Providencia y Santa Catalina",206,-0.7498957433093414
+departamento,Casanare,405,-1.3809930648419804
+destino_gasto,Funcionamiento,11028,0.025307917806819055
+destino_gasto,Inversión,18939,-0.018019894523399083
+el_contrato_puede_ser_prorrogado,Si,4889,0.14100661814868493
+el_contrato_puede_ser_prorrogado,No,25111,-0.029548391113565144
+entidad_centralizada,Descentralizada,5552,0.028598950130262528
+entidad_centralizada,Centralizada,24448,-0.007225786794826822
+es_grupo,Si,142,0.06804809528942736
+es_grupo,No,29858,-0.00045259538695266454
+es_pyme,Si,4526,0.0029693658032892856
+es_pyme,No,25474,-0.00014072283999759597
+espostconflicto,No,29871,0.006385390430604696
+espostconflicto,Si,129,-0.5018251608971206
+habilita_pago_adelantado,No,29986,0.01536726926613213
+justificacion_modalidad_de,Ley 1150 de 2007,107,0.3733692809547345
+justificacion_modalidad_de,Presupuesto menor al 10% de la Menor Cuantía,245,0.3492489627191267
+justificacion_modalidad_de,Regla aplicable,3227,0.2973044521182427
+justificacion_modalidad_de,Suministro de bienes y servicios de características técnicas uniformes y común utilización,268,0.21946934365433327
+justificacion_modalidad_de,Contratos o convenios Interadministrativos (valor cero),246,0.14889324863059758
+justificacion_modalidad_de,Presupuesto inferior al 10% de la menor cuantía,1957,0.08988141639836171
+justificacion_modalidad_de,Arrendamiento de inmuebles,194,0.049189309247324495
+justificacion_modalidad_de,Decreto 092 de 2017,1270,-0.026312111183804894
+justificacion_modalidad_de,Contratos o convenios Interadministrativos (con valor),241,-0.029221135771024875
+justificacion_modalidad_de,Servicios profesionales y apoyo a la gestión,21803,-0.07782595460522952
+justificacion_modalidad_de,No existe pluralidad de oferentes en el mercado,237,-0.25108325224773753
+modalidad_de_contratacion,Contratación régimen especial (con ofertas),292,0.22095726960596915
+modalidad_de_contratacion,Selección Abreviada de Menor Cuantía,284,0.14189361108981657
+modalidad_de_contratacion,Mínima cuantía,1957,0.07672189507709833
+modalidad_de_contratacion,Selección abreviada subasta inversa,268,0.0720248258274381
+modalidad_de_contratacion,Contratación régimen especial,4209,0.00832281649828978
+modalidad_de_contratacion,Contratación Directa (con ofertas),366,0.007639270131918051
+modalidad_de_contratacion,Contratación directa,22492,-0.014565018050442824
+obligaci_n_ambiental,Si,669,0.056919747963862705
+obligaci_n_ambiental,No,29331,-0.0009843471505948207
+orden,Territorial,21127,0.04997770563761263
+orden,Nacional,8398,-0.09125340812120224
+orden,Corporación Autónoma,475,-0.10491871814425868
+origen_de_los_recursos,Recursos Propios,6499,0.03410735818178227
+origen_de_los_recursos,Distribuido,23501,-0.010677788815119408
+rama,Legislativo,157,0.008180330919980393
+rama,Ejecutivo,23976,-0.00022347153982212034
+rama,Judicial,196,-0.005906244459100507
+rama,Corporación Autónoma,5671,-0.008768879071402964
+reversion,No,29996,0.0
+sector,Salud y Protección Social,4035,0.1654619552093312
+sector,Servicio Público,7822,0.1644982411095564
+sector,Cultura,1198,0.133583178445294
+sector,Minas y Energía,158,0.11190209798360368
+sector,deportes,1141,0.08325763434668645
+sector,No aplica/No pertenece,5256,0.03674423021734161
+sector,Educación Nacional,1907,-0.008198302765049483
+sector,defensa,990,-0.08028446916662992
+sector,Ambiente y Desarrollo Sostenible,1259,-0.12416024393012404
+sector,interior,111,-0.12479490028793098
+sector,Ley de Justicia,436,-0.14870272760823494
+sector,agricultura,490,-0.150780409257364
+sector,Transporte,875,-0.2134100622658648
+sector,Inclusión Social y Reconciliación,702,-0.22612753638035268
+sector,Trabajo,952,-0.25645648024200113
+sector,Industria,415,-0.3449191892013811
+sector,"Vivienda, Ciudad y Territorio",468,-0.46070466449389835
+sector,Información Estadística,584,-0.5021599195419727
+sector,Planeación,388,-0.5787819786997046
+sector,Hacienda y Crédito Público,445,-0.664002109957101
+sector,Tecnologías de la Información y las Comunicaciones,180,-0.8249707169215155
+segmento_unspsc,72,380,0.09248504546991501
+segmento_unspsc,85,1840,0.07277874701429772
+segmento_unspsc,NA,367,0.05209545844487751
+segmento_unspsc,80,21167,0.027746136561564633
+segmento_unspsc,78,306,-0.06218376798342428
+segmento_unspsc,81,790,-0.06627691793087195
+segmento_unspsc,76,137,-0.0747868527596111
+segmento_unspsc,93,1706,-0.10334717981157673
+segmento_unspsc,84,286,-0.14808740847859542
+segmento_unspsc,42,122,-0.16926014739719147
+segmento_unspsc,83,104,-0.19748818090465853
+segmento_unspsc,77,154,-0.22533797267881672
+segmento_unspsc,90,240,-0.2496403870824352
+segmento_unspsc,43,123,-0.2853598309720497
+segmento_unspsc,86,445,-0.3237237550898658
+segmento_unspsc,82,205,-0.3265659301017221
+segmento_unspsc,44,102,-0.382872598437686
+tipo_de_contrato,Obra,145,0.02156152700301145
+tipo_de_contrato,Otro,991,0.0184261813902026
+tipo_de_contrato,Arrendamiento de inmuebles,194,0.007344189470385574
+tipo_de_contrato,Decreto 092 de 2017,1270,0.007247474573998889
+tipo_de_contrato,Suministros,930,0.0035626854291965254
+tipo_de_contrato,Seguros,111,-0.0008268188812307506
+tipo_de_contrato,Prestación de servicios,25748,-0.0014787457392259281
+tipo_de_contrato,Compraventa,489,-0.00431580892802201
+tipo_x_tramo_precio,Decreto 092 de 2017 | >1.000M,115,0.641173536668117
+tipo_x_tramo_precio,Otro | >1.000M,156,0.6404941305003791
+tipo_x_tramo_precio,Decreto 092 de 2017 | 100M-1.000M,171,0.48341721616084493
+tipo_x_tramo_precio,Otro | 100M-1.000M,484,0.4463658974224638
+tipo_x_tramo_precio,Prestación de servicios | >1.000M,447,0.20001064861614684
+tipo_x_tramo_precio,Arrendamiento de inmuebles | 10M-100M,106,0.0669444217935354
+tipo_x_tramo_precio,Prestación de servicios | <10M,6143,0.054131512149250986
+tipo_x_tramo_precio,Prestación de servicios | 100M-1.000M,1344,0.03565567665487011
+tipo_x_tramo_precio,Otro | 10M-100M,283,0.007557504282131827
+tipo_x_tramo_precio,Compraventa | 10M-100M,285,0.0005564319868897825
+tipo_x_tramo_precio,Decreto 092 de 2017 | 10M-100M,438,-0.023682013639503993
+tipo_x_tramo_precio,Prestación de servicios | 10M-100M,17357,-0.03902266980152271
+tipo_x_tramo_precio,Suministros | 100M-1.000M,229,-0.04224100136501318
+tipo_x_tramo_precio,Suministros | 10M-100M,512,-0.14587787379480252
+tipo_x_tramo_precio,Decreto 092 de 2017 | <10M,543,-0.1764308427866299
+tipo_x_tramo_precio,No Definido,479,-0.5021644350580993
+tipo_x_tramo_precio,Suministros | <10M,141,-0.6696793595882736
+tipodocproveedor,Cédula de Ciudadanía,25247,0.004251698268679749
+tipodocproveedor,NIT,4652,-0.04860926148463313
+tramo_precio,<10M,7077,0.0018030552580871342
+tramo_precio,No Definido,479,0.001159485062542168
+tramo_precio,>1.000M,847,0.0007946862349385223
+tramo_precio,100M-1.000M,2451,0.0007340938408414466
+tramo_precio,10M-100M,19146,-0.000785474461947516
