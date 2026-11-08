@@ -4,6 +4,8 @@ from pathlib import Path
 import dash
 import pandas as pd
 from dash import html
+from dash import dcc
+from graficas import construir_graficas
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_DIR / "data" / "processed" / "contratos_modelo.parquet"
@@ -56,6 +58,18 @@ def tarjeta(titulo, valor, color="#18212E"):
             "flex": "1 1 220px",
         },
     )
+
+# Datos necesarios para las gráficas descriptivas
+df_graficas = pd.read_parquet(
+    DATA_PATH,
+    columns=[
+        "tipo_de_contrato",
+        "duracion_pactada_dias",
+        "prorrogado",
+    ],
+)
+
+fig_tipos, fig_duracion = construir_graficas(df_graficas)
 
 app = dash.Dash(__name__)
 app.title = "Alerta temprana de prórrogas | SECOP II"
@@ -117,6 +131,56 @@ app.layout = html.Div(
                         "marginTop": "22px",
                     },
                 ),
+                
+            html.Div(
+                [
+                    html.Div(
+                        [
+                            html.H3(
+                                "Tasa de prórroga por tipo de contrato"
+                            ),
+                            dcc.Graph(
+                                figure=fig_tipos,
+                                config={"displayModeBar": False},
+                            ),
+                        ],
+                        style={
+                            "backgroundColor": "#FFFFFF",
+                            "border": "1px solid #DCE2EA",
+                            "borderRadius": "10px",
+                            "padding": "16px",
+                            "flex": "1 1 450px",
+                            "minWidth": "0",
+                        },
+                    ),
+                    html.Div(
+                        [
+                            html.H3(
+                                "Tasa de prórroga por duración pactada"
+                            ),
+                            dcc.Graph(
+                                figure=fig_duracion,
+                                config={"displayModeBar": False},
+                            ),
+                        ],
+                        style={
+                            "backgroundColor": "#FFFFFF",
+                            "border": "1px solid #DCE2EA",
+                            "borderRadius": "10px",
+                            "padding": "16px",
+                            "flex": "1 1 450px",
+                            "minWidth": "0",
+                        },
+                    ),
+                ],
+                style={
+                    "display": "flex",
+                    "flexWrap": "wrap",
+                    "gap": "14px",
+                    "marginTop": "20px",
+                },
+            ),
+
             ],
             style={
                 "maxWidth": "1200px",
