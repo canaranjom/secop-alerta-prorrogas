@@ -6,7 +6,7 @@ import pandas as pd
 from dash import html, dcc, Input, Output
 from graficas import construir_graficas
 from mapa import construir_mapa
-
+from tabla import cargar_datos_tabla, obtener_pagina, crear_tabla
 
 # ============================================================
 # 1. CONFIGURACION Y CARGA DE DATOS
@@ -147,6 +147,9 @@ opciones_sector = [
 # ============================================================
 # 4. APLICACION DASH
 # ============================================================
+
+# Datos de la tabla: carga única
+df_tabla = cargar_datos_tabla()
 
 app = dash.Dash(__name__)
 
@@ -364,6 +367,28 @@ app.layout = html.Div(
                         "marginTop": "20px",
                     },
                 ),
+                html.Div(
+                    [
+                        html.H3("Consulta histórica de contratos"),
+                        html.P(
+                            "Explora los contratos SECOP II según los "
+                            "filtros seleccionados. Los resultados de "
+                            "prórroga son históricos, no predicciones.",
+                            style={
+                                "color": "#4A5668",
+                                "fontSize": "13px",
+                            },
+                        ),
+                        crear_tabla(),
+                    ],
+                    style={
+                        "backgroundColor": "#FFFFFF",
+                        "border": "1px solid #DCE2EA",
+                        "borderRadius": "10px",
+                        "padding": "16px",
+                        "marginTop": "20px",
+                    },
+                ),
             ],
             style={
                 "maxWidth": "1200px",
@@ -470,6 +495,63 @@ def actualizar_panorama(anio, departamento, sector):
 # ============================================================
 # 6. EJECUCION LOCAL
 # ============================================================
+
+@app.callback(
+    Output("tabla-contratos", "data"),
+    Output("tabla-contratos", "page_count"),
+    Input("tabla-contratos", "page_current"),
+    Input("tabla-contratos", "page_size"),
+    Input("tabla-contratos", "sort_by"),
+    Input("filtro-anio", "value"),
+    Input("filtro-departamento", "value"),
+    Input("filtro-sector", "value"),
+)
+def actualizar_tabla(
+    pagina, tamano, ordenamiento,
+    anio, departamento, sector
+):
+    datos = df_tabla
+
+    if anio != "todos":
+        datos = datos[datos["anio_firma"] == anio]
+
+    if departamento != "todos":
+        datos = datos[
+            datos["departamento"] == departamento
+        ]
+
+    if sector != "todos":
+        datos = datos[datos["sector"] == sector]
+
+    if ordenamiento:
+        columna = ordenamiento[0]["column_id"]
+        ascendente = (
+            ordenamiento[0]["direction"] == "asc"
+        )
+
+        datos = datos.sort_values(
+            columna,
+            ascending=ascendente,
+            na_position="last",
+        )
+
+    if datos.empty:
+        return [], 0
+
+    total_paginas = (
+        len(datos) + tamano - 1
+    ) // tamano
+
+    pagina = min(pagina or 0, total_paginas - 1)
+
+    registros = obtener_pagina(
+        datos,
+        pagina=pagina,
+        tamano=tamano,
+    )
+
+    return registros, total_paginas
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
