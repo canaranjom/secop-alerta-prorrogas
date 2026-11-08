@@ -5,6 +5,7 @@ import dash
 import pandas as pd
 from dash import html, dcc, Input, Output
 from graficas import construir_graficas
+from mapa import construir_mapa
 
 
 # ============================================================
@@ -333,6 +334,36 @@ app.layout = html.Div(
                         "marginTop": "20px",
                     },
                 ),
+                
+                # MAPA DE PRORROGAS POR DEPARTAMENTO
+                html.Div(
+                    [
+                        html.H3(
+                            "Tasa de prórroga por departamento"
+                        ),
+                        dcc.Graph(
+                            id="mapa-colombia",
+                            figure=construir_mapa(df),
+                            config={"displayModeBar": False},
+                        ),
+                        html.P(
+                            "Fuente: SECOP II. Los contratos sin "
+                            "departamento definido no se representan "
+                            "en el mapa.",
+                            style={
+                                "color": "#4A5668",
+                                "fontSize": "12px",
+                            },
+                        ),
+                    ],
+                    style={
+                        "backgroundColor": "#FFFFFF",
+                        "border": "1px solid #DCE2EA",
+                        "borderRadius": "10px",
+                        "padding": "16px",
+                        "marginTop": "20px",
+                    },
+                ),
             ],
             style={
                 "maxWidth": "1200px",
@@ -355,6 +386,7 @@ app.layout = html.Div(
     Output("kpi-entidades", "children"),
     Output("grafica-tipos", "figure"),
     Output("grafica-duracion", "figure"),
+    Output("mapa-colombia", "figure"),
     Input("filtro-anio", "value"),
     Input("filtro-departamento", "value"),
     Input("filtro-sector", "value"),
@@ -422,17 +454,18 @@ def actualizar_panorama(anio, departamento, sector):
             *indicadores,
             figura_vacia_tipos,
             figura_vacia_duracion,
+            construir_mapa(datos),
         )
-
     # Reconstruir graficas con los datos filtrados
     figuras = construir_graficas(datos)
+    figura_mapa = construir_mapa(datos)
 
     return (
         *indicadores,
         figuras[0],
         figuras[1],
+        figura_mapa,
     )
-
 
 # ============================================================
 # 6. EJECUCION LOCAL
