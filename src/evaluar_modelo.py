@@ -1,17 +1,12 @@
-"""Figuras y tablas de evaluación del modelo elegido, para el reporte y para MLflow.
+"""Figuras de evaluación del modelo elegido para el reporte; también se suben a MLflow.
 
-Genera en reports/figures/ (y sube al run elegido de MLflow, en la carpeta 'evaluacion/'):
+Genera en reports/figures/ (y en el run de MLflow, carpeta 'evaluacion/'):
     11_comparacion_modelos.png   métricas de validación de todos los runs del experimento
-    12_calibracion.png           curva de calibración en validación y prueba (probabilidad dicha vs. real)
+    12_calibracion.png           curva de calibración en validación y prueba
     13_shap_importancia.png      importancia global de las variables (promedio de |SHAP|)
-    14_shap_numericas.png        dirección del efecto de las variables numéricas (beeswarm SHAP)
-    comparacion_modelos.csv      tabla de métricas de todos los runs
-    calibracion.csv              tabla de la curva de calibración
-    shap_importancia.csv         importancia global de cada variable
-    shap_categorias.csv          para cada variable categórica, qué categorías suben o bajan el riesgo
+    14_shap_numericas.png        dirección del efecto de las variables numéricas
 
-Los valores SHAP los calcula el propio LightGBM (pred_contrib=True): para cada contrato reparten la
-predicción (en log-odds) entre las 40 variables. Se usa una muestra de validación.
+El análisis detallado (SHAP por contrato y por categoría) está en notebooks/02_modelo_y_shap.ipynb.
 
 Uso (PowerShell, con el .venv activo):
     $env:MLFLOW_TRACKING_URI = "http://<IP_EC2>:8050"
@@ -54,7 +49,6 @@ def comparar_runs(client):
                                                "valid_lift_top10", "test_auc", "test_ap",
                                                "test_precision_top10", "segundos_entrenamiento"]}})
     tabla = pd.DataFrame(filas).dropna(subset=["valid_auc"]).sort_values("valid_auc")
-    tabla.to_csv(SALIDA / "comparacion_modelos.csv", index=False)
 
     fig, ejes = plt.subplots(1, 3, figsize=(13, 0.45 * len(tabla) + 1.6), sharey=True)
     for ax, (col, titulo) in zip(ejes, [("valid_auc", "AUC"), ("valid_ap", "Average precision"),
@@ -103,7 +97,6 @@ def calibracion(modelo, df):
     plt.close(fig)
     tabla = pd.concat(filas)
     tabla["tramo"] = tabla["tramo"].astype(str)
-    tabla.to_csv(SALIDA / "calibracion.csv", index=False)
     return tabla
 
 
@@ -120,7 +113,6 @@ def shap_global(modelo, df):
                          "shap_medio_abs": np.abs(contrib).mean(axis=0)})
              .sort_values("shap_medio_abs", ascending=False))
     imp["porcentaje"] = imp["shap_medio_abs"] / imp["shap_medio_abs"].sum()
-    imp.to_csv(SALIDA / "shap_importancia.csv", index=False)
 
     top = imp.head(15).iloc[::-1]
     fig, ax = plt.subplots(figsize=(8, 6))
@@ -149,17 +141,6 @@ def shap_global(modelo, df):
     plt.tight_layout()
     plt.savefig(SALIDA / "14_shap_numericas.png", dpi=150)
     plt.close("all")
-
-    # Categóricas: efecto promedio de cada categoría (positivo = sube el riesgo).
-    filas = []
-    for i, c in enumerate(CATEGORICAS):
-        g = pd.DataFrame({"categoria": X[c].to_numpy(), "shap": contrib[:, i]}).groupby("categoria")["shap"]
-        res = g.agg(["size", "mean"]).rename(columns={"size": "contratos", "mean": "shap_medio"})
-        res = res[res["contratos"] >= 100].reset_index()
-        res.insert(0, "variable", c)
-        filas.append(res)
-    cat = pd.concat(filas).sort_values(["variable", "shap_medio"], ascending=[True, False])
-    cat.to_csv(SALIDA / "shap_categorias.csv", index=False)
     return imp
 
 
@@ -186,8 +167,7 @@ def main():
     print(imp.head(15)[["descripcion", "shap_medio_abs", "porcentaje"]].round(3).to_string(index=False))
 
     archivos = ["11_comparacion_modelos.png", "12_calibracion.png", "13_shap_importancia.png",
-                "14_shap_numericas.png", "comparacion_modelos.csv", "calibracion.csv",
-                "shap_importancia.csv", "shap_categorias.csv"]
+                "14_shap_numericas.png"]
     if not args.sin_mlflow:
         exp = client.get_experiment_by_name(EXPERIMENTO)
         run = client.search_runs([exp.experiment_id], filter_string=f"attributes.run_name = '{args.run}'",
