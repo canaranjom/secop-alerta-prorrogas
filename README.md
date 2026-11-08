@@ -41,26 +41,32 @@ Con otras versiones pueden fallar la instalación de `requirements.txt` o la car
 ```bash
 python -m venv .venv && .venv/Scripts/activate      # Windows
 pip install -r requirements.txt
-dvc repro            # download -> build
-jupyter notebook notebooks/01_exploracion_secop.ipynb
+dvc pull             # datos y modelo desde S3 (lectura pública, sin credenciales)
+jupyter notebook notebooks/
 ```
-Opcional: `SOCRATA_APP_TOKEN` (token gratuito de datos.gov.co) para evitar límites de la API.
+Para regenerar los datos desde la API: `dvc repro` (download → build → features). Opcional: `SOCRATA_APP_TOKEN`
+(token gratuito de datos.gov.co) para evitar límites de la API.
 
-Con conda: `conda env create -f environment.yml && conda activate secop`.
-
-**Datos ya generados** (misma versión de `dvc.lock`, ~670 MB): [Google Drive – secop-alerta-prorrogas-datos](https://drive.google.com/drive/folders/1gstAO5z1DnsefY5eUyVOuUw8qOFhdwH5?usp=sharing).
-Copiar `raw/` y `processed/` dentro de `data/` para correr el notebook sin descargar desde la API.
+Para entrenar y registrar experimentos en MLflow: `$env:MLFLOW_TRACKING_URI = "http://<IP_EC2>:8050"` y
+`python src/train.py --modelo lgbm --autor <nombre>`.
 
 ## Estructura
 ```
-params.yaml            parámetros (ventana de fechas, fecha de corte)
-dvc.yaml / dvc.lock    pipeline y versión exacta de los datos
-src/download_secop.py  descarga desde la API
-src/build_dataset.py   cruce de tablas + variable objetivo
-notebooks/             exploración de datos
-reports/figures/       gráficas de la exploración
-docs/                  maqueta del prototipo (GitHub Pages)
-entrega/               reporte de la Entrega 1 y reporte de trabajo en equipo
+params.yaml              parámetros (ventana de fechas, fecha de corte, partición, suavizado)
+dvc.yaml / dvc.lock      pipeline y versión exacta de los datos
+models.dvc               versión del modelo exportado (models/)
+src/download_secop.py    descarga desde la API
+src/build_dataset.py     cruce de tablas + variable objetivo
+src/features.py          variables del modelo y partición temporal
+src/train.py             entrenamiento y registro en MLflow
+src/exportar_modelo.py   Model Registry y exportación del modelo
+src/prediccion.py        evaluación de un contrato (página Evaluar contrato del tablero)
+src/evaluar_modelo.py    figuras de evaluación del reporte
+notebooks/               01 exploración de datos · 02 modelo elegido y SHAP
+experimentos/            experimentos de cada integrante
+reports/                 hipótesis de variables y figuras
+docs/                    maqueta del prototipo (GitHub Pages)
+entrega/                 reportes de las entregas y reporte de trabajo en equipo
 ```
 
 **Maqueta:** https://canaranjom.github.io/secop-alerta-prorrogas/
