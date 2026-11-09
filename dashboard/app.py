@@ -7,6 +7,7 @@ from dash import html, dcc, Input, Output
 from graficas import construir_graficas
 from mapa import construir_mapa
 from tabla import cargar_datos_tabla, obtener_pagina, crear_tabla
+from evaluacion import crear_evaluacion, registrar_callbacks_evaluacion
 
 # ============================================================
 # 1. CONFIGURACION Y CARGA DE DATOS
@@ -178,7 +179,21 @@ app.layout = html.Div(
                 "padding": "18px 32px",
             },
         ),
+        
+        dcc.Tabs(
+            id="navegacion",
+            value="panorama",
+            children=[
+                dcc.Tab(label="Panorama", value="panorama"),
+                dcc.Tab(label="Evaluar contrato", value="evaluar"),
+            ],
+        ),
 
+        html.Div(
+            id="contenido-evaluacion",
+            children=crear_evaluacion(),
+            style={"display": "none"},
+        ),
         # Contenido principal
         html.Main(
             [
@@ -390,6 +405,7 @@ app.layout = html.Div(
                     },
                 ),
             ],
+            id="contenido-panorama",
             style={
                 "maxWidth": "1200px",
                 "margin": "auto",
@@ -551,6 +567,28 @@ def actualizar_tabla(
     )
 
     return registros, total_paginas
+
+
+# ============================================================
+# 7. NAVEGACION Y EVALUACION PREDICTIVA
+# ============================================================
+
+registrar_callbacks_evaluacion(app)
+
+
+@app.callback(
+    Output("contenido-panorama", "style"),
+    Output("contenido-evaluacion", "style"),
+    Input("navegacion", "value"),
+)
+def cambiar_pantalla(pantalla):
+    if pantalla == "evaluar":
+        return {"display": "none"}, {"display": "block"}
+
+    return (
+        {"maxWidth": "1200px", "margin": "auto", "padding": "28px 24px"},
+        {"display": "none"},
+    )
 
 
 if __name__ == "__main__":
