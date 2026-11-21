@@ -1,0 +1,9 @@
+# Contexto de construcción de api/Dockerfile (Docker lo usa porque se llama igual que el Dockerfile).
+# Lista de permitidos: se excluye todo y solo se deja entrar lo que la imagen necesita.
+# Sin esto, Docker enviaría al constructor .venv/ y data/ (más de 700 MB).
+*
+!api/
+!src/prediccion.py
+!models/
+api/tests/
+**/__pycache__
