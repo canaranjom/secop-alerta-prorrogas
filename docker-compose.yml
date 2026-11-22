@@ -1,0 +1,29 @@
+# Levanta la API del modelo y el tablero juntos.
+# Antes: `dvc pull models data/tablero` (los dos Dockerfiles copian esos archivos).
+#     docker compose up -d --build
+# API: http://<host>:8001/docs    Tablero: http://<host>:8050
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    image: secop-api
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+
+  tablero:
+    build:
+      context: .
+      dockerfile: dashboard/Dockerfile
+    image: secop-tablero
+    ports:
+      - "8050:8050"
+    environment:
+      # Dentro de la red de compose, cada servicio se alcanza por su nombre: "api", no "localhost".
+      API_URL: http://api:8001
+    depends_on:
+      api:
+        condition: service_healthy   # espera al HEALTHCHECK de la API antes de arrancar el tablero
+    restart: unless-stopped

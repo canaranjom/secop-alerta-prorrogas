@@ -1,0 +1,6 @@
+# Contexto de construcción de dashboard/Dockerfile: se excluye todo y solo entra lo que el tablero necesita.
+*
+!dashboard/
+!data/tablero/
+dashboard/simplificar_geojson.py
+**/__pycache__

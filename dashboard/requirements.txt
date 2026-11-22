@@ -1,0 +1,7 @@
+# Solo lo que necesita el tablero (para la imagen Docker). Mismas versiones del .venv del proyecto.
+# El modelo NO va aquí: el tablero le pide las predicciones a la API por HTTP (requests).
+dash==4.5.0
+plotly==7.1.0
+pandas==3.1.0
+pyarrow==25.0.1
+requests==2.34.2
