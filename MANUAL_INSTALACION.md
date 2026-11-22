@@ -176,7 +176,7 @@ Con el ambiente completo del proyecto (`pip install -r requirements.txt`), en do
 
 ```powershell
 uvicorn api.main:app --port 8001      # terminal 1: API
-python dashboard/app.py               # terminal 2: tablero (usa API_URL=http://localhost:8001 por defecto)
+python dashboard/app.py               # terminal 2: tablero (busca la API en localhost:8001)
 ```
 
 ---
