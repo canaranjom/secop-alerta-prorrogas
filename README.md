@@ -33,6 +33,11 @@ Todas las llaves se verificaron cruzando contratos reales de 2024 contra cada ta
 - Contratos SECOP II **firmados en 2023–2024** y **ya terminados** a la fecha de corte (`params.yaml`).
 - Se excluyen columnas con datos personales (nombres/documentos de personas, cuentas bancarias).
 
+## Instalar el tablero y la API (Docker)
+
+Ver **[MANUAL_INSTALACION.md](MANUAL_INSTALACION.md)**: en resumen, `dvc pull models.dvc tablero` y
+`docker compose up -d --build` (tablero en el puerto 8050, API en el 8001).
+
 ## Reproducir
 
 Requiere **Python 3.12** (probado con 3.12.10; ver `.python-version`). Para revisar la versión: `python --version`.
