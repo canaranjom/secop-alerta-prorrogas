@@ -86,3 +86,19 @@ stages:
       hash: md5
       md5: 6caf93af951e3c253e974c6968df573a
       size: 402
+  tablero:
+    cmd: python src/datos_tablero.py
+    deps:
+    - path: data/processed/contratos_modelo.parquet
+      hash: md5
+      md5: 5845602e9664d8e14de727e5dbdcdf98
+      size: 368352526
+    - path: src/datos_tablero.py
+      hash: md5
+      md5: 9845b754aaf9a1f31191271059ccd612
+      size: 1290
+    outs:
+    - path: data/tablero/contratos_tablero.parquet
+      hash: md5
+      md5: 2971b4f69f3a292238a1301146aeb5ff
+      size: 27894800

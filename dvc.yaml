@@ -37,3 +37,11 @@ stages:
     metrics:
       - data/processed/features_resumen.json:
           cache: false
+
+  tablero:
+    cmd: python src/datos_tablero.py
+    deps:
+      - src/datos_tablero.py
+      - data/processed/contratos_modelo.parquet
+    outs:
+      - data/tablero/contratos_tablero.parquet
