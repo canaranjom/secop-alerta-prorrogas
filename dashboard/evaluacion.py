@@ -1,20 +1,36 @@
 """Pantalla Evaluar contrato para el proyecto SECOP II.
 
+Consulta las predicciones y los datos del formulario mediante FastAPI.
 Mantiene la selección de entidad visible después de buscarla.
-No modifica la lógica predictiva de src/prediccion.py.
 """
-from pathlib import Path
-import sys
 
-import pandas as pd
+import os
+import requests
+
 from dash import html, dcc, Input, Output, State
 from dash.exceptions import PreventUpdate
 
-RAIZ = Path(__file__).resolve().parent.parent
-if str(RAIZ) not in sys.path:
-    sys.path.insert(0, str(RAIZ))
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8001").rstrip("/")
+API = f"{API_URL}/api/v1"
 
-from src.prediccion import opciones, buscar_entidades, evaluar_contrato, _cargar
+
+def api_get(ruta, **params):
+    """Consulta la API y devuelve su respuesta JSON."""
+    respuesta = requests.get(
+        f"{API}{ruta}",
+        params=params,
+        timeout=30
+    )
+    respuesta.raise_for_status()
+    return respuesta.json()
+
+
+def opciones_seguras(variable):
+    """Obtiene opciones de la API sin impedir el arranque de Dash."""
+    try:
+        return api_get(f"/opciones/{variable}")["valores"]
+    except (requests.RequestException, KeyError, ValueError, TypeError):
+        return []
 
 
 def desplegable(titulo, identificador, variable):
@@ -22,7 +38,7 @@ def desplegable(titulo, identificador, variable):
         html.Label(titulo, style={"fontWeight": "600", "fontSize": "13px"}),
         dcc.Dropdown(
             id=identificador,
-            options=[{"label": str(v), "value": str(v)} for v in opciones(variable)],
+            options=[],
             placeholder="Seleccionar...",
             clearable=True,
             style={"marginTop": "6px"},
@@ -65,6 +81,17 @@ def crear_evaluacion():
             "Estima el riesgo de prórroga de un contrato público al momento de su firma.",
             style={"color": "#4A5668"},
         ),
+
+        html.Div(
+            id="eval-api-aviso",
+            children=(
+                "Servicio de predicción no disponible temporalmente. "
+                "No es posible buscar entidades ni evaluar contratos. "
+                "Puedes continuar utilizando Panorama."
+            ),
+            style={"display": "none"},
+        ),
+
         html.Div([
             html.H3("Información del contrato"),
             html.Div([
@@ -121,47 +148,126 @@ def crear_evaluacion():
     })
 
 
+
 def _fila_entidad(codigo):
+    """Obtiene una entidad desde la API usando su código."""
     if codigo is None or str(codigo).strip() == "":
         return None
-    entidades = _cargar()[2]
-    codigo = str(codigo)
-    if codigo not in entidades.index:
-        return None
-    fila = entidades.loc[codigo]
-    if isinstance(fila, pd.DataFrame):
-        fila = fila.iloc[0]
-    return fila
+
+    try:
+        return api_get(f"/entidades/{str(codigo).strip()}")
+    except requests.HTTPError as error:
+        if error.response is not None and error.response.status_code == 404:
+            return None
+        raise
 
 
 def registrar_callbacks_evaluacion(app):
+
+
+    @app.callback(
+        Output("eval-tipo", "options"),
+        Output("eval-modalidad", "options"),
+        Output("eval-departamento", "options"),
+        Output("eval-orden", "options"),
+        Output("eval-sector", "options"),
+        Output("eval-api-aviso", "style"),
+        Input("navegacion", "value"),
+        State("eval-tipo", "options"),
+        State("eval-modalidad", "options"),
+        State("eval-departamento", "options"),
+        State("eval-orden", "options"),
+        State("eval-sector", "options"),
+    )
+
+    def cargar_opciones_evaluacion(pantalla, *opciones_actuales):
+        """Actualiza opciones y muestra el estado de FastAPI."""
+        if pantalla != "evaluar":
+            raise PreventUpdate
+
+        variables = [
+            "tipo_de_contrato",
+            "modalidad_de_contratacion",
+            "departamento",
+            "orden",
+            "sector",
+        ]
+
+        estilo_aviso = {
+            "backgroundColor": "#FFF4E5",
+            "color": "#8A4B08",
+            "border": "1px solid #F1CD93",
+            "borderRadius": "6px",
+            "padding": "12px 16px",
+            "marginTop": "16px",
+            "marginBottom": "16px",
+            "fontSize": "13px",
+        }
+
+        try:
+            api_get("/health")
+            api_disponible = True
+        except (requests.RequestException, KeyError, ValueError, TypeError):
+            api_disponible = False
+
+        resultados = []
+
+        for variable, anteriores in zip(variables, opciones_actuales):
+            if not api_disponible:
+                resultados.append(anteriores or [])
+                continue
+
+            try:
+                valores = api_get(f"/opciones/{variable}")["valores"]
+                nuevas = [
+                    {"label": str(v), "value": str(v)}
+                    for v in valores
+                ]
+                resultados.append(nuevas)
+            except (requests.RequestException, KeyError, ValueError, TypeError):
+                resultados.append(anteriores or [])
+
+        if api_disponible:
+            estilo_aviso = {"display": "none"}
+
+        return (*resultados, estilo_aviso)
+
     @app.callback(
         Output("eval-entidad", "options"),
         Input("eval-entidad", "search_value"),
         State("eval-entidad", "value"),
     )
+
     def buscar_opciones_entidad(texto, seleccion):
-        """Mantener la opción elegida aun cuando Dash borre search_value."""
+        """Busca entidades y conserva la selección ante fallos de API."""
         encontradas = []
+
         if texto and len(texto.strip()) >= 3:
-            resultados = buscar_entidades(texto.strip(), n=20)
-            encontradas = [
-                {
-                    "label": f"{fila['nombre_entidad']} ({fila['departamento']})",
-                    "value": str(fila["codigo_entidad"]),
-                }
-                for _, fila in resultados.iterrows()
-            ]
+            try:
+                resultados = api_get("/entidades", q=texto.strip(), n=20)
+                encontradas = [
+                    {
+                        "label": f"{fila['nombre_entidad']} ({fila['departamento']})",
+                        "value": str(fila["codigo_entidad"]),
+                    }
+                    for fila in resultados
+                ]
+            except (requests.RequestException, KeyError, ValueError, TypeError):
+                pass
 
         if seleccion is not None:
             codigo = str(seleccion)
             if not any(op["value"] == codigo for op in encontradas):
-                fila = _fila_entidad(codigo)
-                if fila is not None:
-                    encontradas.append({
-                        "label": f"{fila['nombre_entidad']} ({fila['departamento']})",
-                        "value": codigo,
-                    })
+                try:
+                    fila = _fila_entidad(codigo)
+                    if fila is not None:
+                        encontradas.append({
+                            "label": f"{fila['nombre_entidad']} ({fila['departamento']})",
+                            "value": codigo,
+                        })
+                except (requests.RequestException, KeyError, ValueError, TypeError):
+                    raise PreventUpdate
+
         return encontradas
 
     @app.callback(
@@ -172,8 +278,12 @@ def registrar_callbacks_evaluacion(app):
         Input("eval-entidad", "value"),
         prevent_initial_call=True,
     )
+
     def completar_entidad(codigo):
-        fila = _fila_entidad(codigo)
+        try:
+            fila = _fila_entidad(codigo)
+        except (requests.RequestException, KeyError, ValueError, TypeError):
+            raise PreventUpdate
         if fila is None:
             if not codigo:
                 return None, None, None, ""
@@ -228,12 +338,40 @@ def registrar_callbacks_evaluacion(app):
             "codigo_proveedor": proveedor,
         }
         try:
-            resultado = evaluar_contrato(datos)
-        except Exception as error:
-            return html.Div([
-                html.H4("No fue posible evaluar el contrato"),
-                html.Pre(str(error)),
-            ], style={"color": "#B91C1C"})
+            respuesta = requests.post(
+                f"{API}/evaluar",
+                json=datos,
+                timeout=30
+            )
+            respuesta.raise_for_status()
+            resultado = respuesta.json()
+
+        except requests.Timeout:
+            return html.P(
+                "La API tardó demasiado en responder. Intenta nuevamente.",
+                style={"color": "#B91C1C"}
+            )
+
+        except requests.ConnectionError:
+            return html.P(
+                "No fue posible conectar con el servicio de predicción. "
+                "Verifica que la API esté disponible.",
+                style={"color": "#B91C1C"}
+            )
+
+        except requests.HTTPError as error:
+            return html.P(
+                "No fue posible evaluar el contrato. "
+                f"El servicio respondió con el código "
+                f"{error.response.status_code if error.response is not None else 'desconocido'}.",
+                style={"color": "#B91C1C"}
+            )
+
+        except (ValueError, KeyError, TypeError):
+            return html.P(
+                "La respuesta del servicio de predicción no tiene el formato esperado.",
+                style={"color": "#B91C1C"}
+            )
 
         probabilidad = resultado["probabilidad_prorroga"] * 100
         nivel = str(resultado["nivel"]).lower()
