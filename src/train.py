@@ -56,13 +56,13 @@ DEFAULTS = {
 MUESTRA_DEFAULT = {"logistica": 0.5, "rf": 0.3, "lgbm": 1.0}
 
 
-def construir_modelo(nombre, hp):
+def construir_modelo(nombre, hp, semilla=SEMILLA):
     if nombre == "logistica":
         prep = ColumnTransformer([
             ("cat", OneHotEncoder(handle_unknown="infrequent_if_exist", min_frequency=200), CATEGORICAS),
             ("num", Pipeline([("imp", SimpleImputer(strategy="median")), ("esc", StandardScaler())]), NUMERICAS),
         ])
-        return Pipeline([("prep", prep), ("clf", LogisticRegression(random_state=SEMILLA, **hp))]), {}
+        return Pipeline([("prep", prep), ("clf", LogisticRegression(random_state=semilla, **hp))]), {}
 
     # Modelos de árboles: las categorías se codifican como enteros (no necesitan one-hot ni escalar).
     prep = ColumnTransformer([
@@ -71,11 +71,11 @@ def construir_modelo(nombre, hp):
         ("num", SimpleImputer(strategy="median"), NUMERICAS),
     ])
     if nombre == "rf":
-        clf = RandomForestClassifier(random_state=SEMILLA, n_jobs=-1, **hp)
+        clf = RandomForestClassifier(random_state=semilla, n_jobs=-1, **hp)
         return Pipeline([("prep", prep), ("clf", clf)]), {}
     if nombre == "lgbm":
         from lightgbm import LGBMClassifier
-        clf = LGBMClassifier(random_state=SEMILLA, n_jobs=-1, verbose=-1, **hp)
+        clf = LGBMClassifier(random_state=semilla, n_jobs=-1, verbose=-1, **hp)
         # Las primeras columnas (las categóricas) se tratan como categorías nativas de LightGBM.
         return Pipeline([("prep", prep), ("clf", clf)]), {"clf__categorical_feature": list(range(len(CATEGORICAS)))}
     raise ValueError(f"Modelo desconocido: {nombre}")
@@ -113,6 +113,7 @@ def main():
     ap.add_argument("--muestra", type=float, default=None, help="Fracción del entrenamiento a usar (0-1)")
     ap.add_argument("--nombre", default=None, help="Nombre del run (opcional)")
     ap.add_argument("--nota", default="", help="Qué se quiere probar con este run (queda en MLflow)")
+    ap.add_argument("--semilla", type=int, default=SEMILLA, help="Semilla aleatoria del modelo (por defecto 42)")
     args = ap.parse_args()
 
     if not os.environ.get("MLFLOW_TRACKING_URI"):
@@ -129,7 +130,7 @@ def main():
     valid, test = df[df["split"] == "valid"], df[df["split"] == "test"]
     X = lambda d: d[CATEGORICAS + NUMERICAS]  # noqa: E731
 
-    modelo, fit_kw = construir_modelo(args.modelo, hp)
+    modelo, fit_kw = construir_modelo(args.modelo, hp, args.semilla)
 
     mlflow.set_experiment(EXPERIMENTO)
     nombre = args.nombre or f"{args.modelo}-{args.autor.lower()}"
@@ -138,7 +139,7 @@ def main():
         # También se registran los parámetros de las variables (params.yaml), p. ej. suavizado_m.
         p_feat = yaml.safe_load(open("params.yaml", encoding="utf-8"))["features"]
         mlflow.log_params({**hp, **{f"feat_{k}": v for k, v in p_feat.items()},
-                           "modelo": args.modelo, "muestra_train": muestra,
+                           "modelo": args.modelo, "semilla": args.semilla, "muestra_train": muestra,
                            "filas_train": len(train), "n_variables": len(CATEGORICAS) + len(NUMERICAS)})
 
         print(f"Entrenando {args.modelo} con {len(train):,} contratos y {hp} ...")

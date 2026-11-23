@@ -177,3 +177,67 @@ La tasa de prórroga en prueba (10,2 %) es menor que en validación (13,0 %), lo
 - Hanley, J. A. y McNeil, B. J. (1982). The meaning and use of the area under a receiver operating characteristic (ROC) curve. *Radiology, 143*(1), 29–36.
 - Micci-Barreca, D. (2001). A preprocessing scheme for high-cardinality categorical attributes in classification and prediction problems. *ACM SIGKDD Explorations Newsletter, 3*(1), 27–32.
 - van den Goorbergh, R., van Smeden, M., Timmerman, D. y Van Calster, B. (2022). The harm of class imbalance corrections for risk prediction models: Illustration and simulation using logistic regression. *Journal of the American Medical Informatics Association, 29*(9), 1525–1534.
+
+---
+
+# Entrega 3 · Ronda v2 sobre el modelo final (LightGBM)
+
+**Pregunta:** ¿cuánto conviene regularizar LightGBM? La referencia es `lgbm-base`, el modelo registrado como `secop-prorroga` v1 (`min_child_samples = 100`, `colsample_bytree = 0,8`, semilla 42; AUC de validación 0,815).
+**Servidor:** MLflow en la EC2 del equipo (3.88.171.144:8050), experimento `secop-prorrogas`, 22 de noviembre de 2026. Todos los runs usan el 100 % del entrenamiento (1.117.593 contratos). Las cifras son de **validación** (abril a junio de 2024), que es el conjunto con el que se decide; prueba solo se reporta.
+
+## 7. Experimentos
+
+- **Experimento 4. Mínimo de contratos por hoja (`min_child_samples`):** 25 (menos regularización) y 400 (más regularización), frente a 100 en la base. Un valor bajo permite hojas muy específicas y riesgo de sobreajuste; uno alto puede causar subajuste (documentación de LightGBM, *Parameters Tuning*).
+- **Experimento 5. Fracción de variables por árbol (`colsample_bytree`):** 0,5 y 1,0, frente a 0,8 en la base. Submuestrear variables en cada árbol es la idea del *random subspace method* (Ho, 1998) y la documentación de LightGBM lo recomienda para controlar el sobreajuste.
+- **Experimento 6 (agregado). Variabilidad por la semilla:** las cuatro variantes cayeron en precisión del 10 % en alerta en la misma dirección, sin importar si regularizaban más o menos. Para saber si esa caída era real o azar del entrenamiento (`subsample` y `colsample_bytree` son aleatorios), se repitió `lgbm-base` con las semillas 42, 1, 7, 123 y 2026. Para esto se agregó la opción `--semilla` a `src/train.py`; por defecto vale 42, de modo que los runs anteriores no cambian.
+
+## 8. Registro de resultados
+
+**Experimentos 4 y 5**
+
+| # | Run en MLflow | Qué cambié | valid_auc | valid_precision_top10 | valid_ap | valid_brier |
+|---|---|---|---|---|---|---|
+| 0 | lgbm-base (Camilo) | Referencia | 0,8150 | 0,4839 | 0,4400 | 0,0916 |
+| 10 | lgbm-mcs25-julian | min_child_samples = 25 | 0,8159 | 0,4712 | 0,4322 | 0,0920 |
+| 11 | lgbm-mcs400-julian | min_child_samples = 400 | 0,8148 | 0,4670 | 0,4402 | 0,0915 |
+| 12 | lgbm-col05-julian | colsample_bytree = 0,5 | 0,8212 | 0,4718 | 0,4239 | 0,0920 |
+| 13 | lgbm-col10-julian | colsample_bytree = 1,0 | 0,8139 | 0,4745 | 0,4260 | 0,0923 |
+
+**Experimento 6: `lgbm-base` con cinco semillas**
+
+| # | Run en MLflow | Semilla | valid_auc | valid_precision_top10 | valid_ap | valid_brier | test_auc | test_precision_top10 |
+|---|---|---|---|---|---|---|---|---|
+| 14 | lgbm-base-s42-julian | 42 (control) | 0,8150 | 0,4839 | 0,4400 | 0,0916 | 0,8245 | 0,4200 |
+| 15 | lgbm-base-s1-julian | 1 | 0,8188 | 0,4728 | 0,4300 | 0,0920 | 0,8279 | 0,4337 |
+| 16 | lgbm-base-s7-julian | 7 | 0,8158 | 0,4687 | 0,4208 | 0,0924 | 0,8246 | 0,4196 |
+| 17 | lgbm-base-s123-julian | 123 | 0,8143 | 0,4693 | 0,4229 | 0,0925 | 0,8284 | 0,4236 |
+| 18 | lgbm-base-s2026-julian | 2026 | 0,8211 | 0,4883 | 0,4419 | 0,0909 | 0,8284 | 0,4234 |
+| | **Media ± desviación estándar** | | **0,8170 ± 0,0029** | **0,4766 ± 0,0089** | **0,4311 ± 0,0096** | **0,0919 ± 0,0007** | **0,8268 ± 0,0020** | **0,4241 ± 0,0057** |
+
+**Variantes frente a la banda de la base** (z = (variante − media) / desviación estándar)
+
+| Variante | z en valid_auc | z en valid_precision_top10 |
+|---|---|---|
+| mcs25 | −0,4 | −0,6 |
+| mcs400 | −0,8 | −1,1 |
+| col05 | +1,5 | −0,5 |
+| col10 | −1,1 | −0,2 |
+
+Soportes: pantallazos de las comparaciones en MLflow con la IP del servidor visible, en `entrega/pantallazos/` (`julian_exp4_*.png`, `julian_exp5_*.png` y `julian_exp6_*.png`). Orden de las columnas en las tablas de MLflow: Exp. 4 = 100, 25, 400; Exp. 5 = 0,8, 0,5, 1,0; Exp. 6 = semillas 1, 7, 123, 2026, 42.
+
+## 9. Conclusiones
+
+- **Control de reproducibilidad:** con la semilla 42, el run en un Mac (`lgbm-base-s42-julian`) reprodujo **exactamente** las métricas de `lgbm-base`, entrenado en otro computador con Windows. El mismo código, los mismos datos versionados con DVC y la misma semilla dan el mismo modelo.
+- **Experimentos 4 y 5:** comparadas con un solo run de la base, todas las variantes parecían peores en precisión del 10 % en alerta (entre −0,9 y −1,7 puntos), y `col05` parecía mejor en AUC (+0,006). **Comparadas con la variación por semilla, ninguna diferencia supera 1,5 desviaciones estándar**: no se distinguen del azar del entrenamiento. La semilla 42 resultó la segunda corrida más alta de las cinco en precisión del 10 %, lo que hacía ver peores a las variantes.
+- **Experimento 6. Variabilidad por semilla:** con exactamente la misma configuración, la precisión del 10 % en alerta varió entre 0,4687 (semilla 7) y 0,4883 (semilla 2026), un rango de 2 puntos, y el AUC entre 0,8143 y 0,8211. En cambio, el Brier casi no cambió (0,0909 a 0,0925): la calidad de las probabilidades es estable, mientras que la parte alta de la lista, la que el tablero pone en alerta, es la más sensible al azar del entrenamiento. Por eso cualquier comparación sobre esa métrica debe hacerse con varias semillas.
+- **Hallazgo:** el modelo es **robusto a la regularización** en el rango probado (`min_child_samples` de 25 a 400; `colsample_bytree` de 0,5 a 1,0). No depende de un ajuste fino de estos parámetros, lo que conviene para un modelo que se reentrenará periódicamente.
+- **Decisión: se mantiene `lgbm-base` (`secop-prorroga` v1) como modelo desplegado.** Ninguna alternativa justifica el cambio, y la v1 ya está desplegada y es reproducible.
+- **Desempeño reportado con su margen:** en prueba (julio a diciembre de 2024), AUC 0,827 ± 0,002 y precisión del 10 % en alerta 0,424 ± 0,006, es decir, unas 4,2 veces la tasa general de prórroga del periodo (10,2 %).
+- **Lección aprendida:** el error de muestreo de la precisión del 10 % en validación (unos 18.300 contratos) es de aproximadamente ±0,004, pero la variación real entre semillas es de ±0,009, más del doble. En este problema, comparar runs únicos con diferencias de un punto en esa métrica no es confiable; las comparaciones deben hacerse con varias semillas (Bouthillier et al., 2021; Dietterich, 1998).
+
+### Referencias de esta sección
+
+- Bouthillier, X., Delaunay, P., Bronzi, M., Trofimov, A., Nichyporuk, B., Szeto, J., … Vincent, P. (2021). Accounting for variance in machine learning benchmarks. *Proceedings of Machine Learning and Systems, 3* (MLSys 2021).
+- Dietterich, T. G. (1998). Approximate statistical tests for comparing supervised classification learning algorithms. *Neural Computation, 10*(7), 1895–1923.
+- Ho, T. K. (1998). The random subspace method for constructing decision forests. *IEEE Transactions on Pattern Analysis and Machine Intelligence, 20*(8), 832–844.
+- Microsoft. (2026). *LightGBM documentation: Parameters tuning* (versión 4.7.0). https://lightgbm.readthedocs.io/en/latest/Parameters-Tuning.html
