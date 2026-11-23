@@ -1,4 +1,5 @@
 
+import os
 from pathlib import Path
 
 import dash
@@ -14,7 +15,7 @@ from evaluacion import crear_evaluacion, registrar_callbacks_evaluacion
 # ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_PATH = BASE_DIR / "data" / "processed" / "contratos_modelo.parquet"
+DATA_PATH = BASE_DIR / "data" / "tablero" / "contratos_tablero.parquet"
 
 # Una sola lectura para indicadores, filtros y graficas
 df = pd.read_parquet(
@@ -591,5 +592,10 @@ def cambiar_pantalla(pantalla):
     )
 
 
+
 if __name__ == "__main__":
-    app.run(debug=True, port=8050)
+    app.run(
+        host=os.getenv("HOST", "0.0.0.0"),
+        port=int(os.getenv("PORT", 8050)),
+        debug=os.getenv("DEBUG", "0") == "1"
+    )

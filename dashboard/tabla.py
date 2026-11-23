@@ -6,7 +6,7 @@ from dash import dash_table
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_PATH = BASE_DIR / "data" / "processed" / "contratos_modelo.parquet"
+DATA_PATH = BASE_DIR / "data" / "tablero" / "contratos_tablero.parquet"
 
 COLUMNAS = [
     "id_contrato",
